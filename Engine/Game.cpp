@@ -1,5 +1,5 @@
-/****************************************************************************************** 
- *	Chili DirectX Framework Version 16.07.20											  *	
+/******************************************************************************************
+ *	Chili DirectX Framework Version 16.07.20											  *
  *	Game.cpp																			  *
  *	Copyright 2016 PlanetChili.net <http://www.planetchili.net>							  *
  *																						  *
@@ -21,16 +21,16 @@
 #include "MainWindow.h"
 #include "Game.h"
 
-Game::Game( MainWindow& wnd )
+Game::Game(MainWindow& wnd)
 	:
-	wnd( wnd ),
-	gfx( wnd )
+	wnd(wnd),
+	gfx(wnd)
 {
 }
 
 void Game::Go()
 {
-	gfx.BeginFrame();	
+	gfx.BeginFrame();
 	UpdateModel();
 	ComposeFrame();
 	gfx.EndFrame();
@@ -38,46 +38,107 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
+	CollisionTests(x, y, xBox, yBox);
+	BallControl();
+}
 
-	isBoxMode = wnd.kbd.KeyIsPressed(VK_CONTROL);
+void Game::ComposeFrame()
+{
+	DrawBox(xBox, yBox, boxColor);
+	DrawBall(x, y, color);
+}
 
-	color = 999;
-
-	if (wnd.kbd.KeyIsPressed(VK_SPACE)) 
+void Game::CollisionTests(int x1, int y1, int x2, int y2)
+{
+	if (ObjectsCollideTest(x1, y1, x2, y2)) {
+		dx = -dx;
+		dy = -dy;
+		isBoxMode = true;
+	}
+	else
 	{
-		color = 888;
+		isBoxMode = false;
 	}
 
-	if ((x >= 20 && x <= 780) || (x < 20 && xspeed >= 0) || (x > 780 && xspeed <= 0))
+	if (BordersCollideTest(x1, y1, 'x'))
 	{
-		x += xspeed;
+		x += dx;
+	}
+	else
+	{
+		dx = -dx;
 	}
 
-	if ((y >= 20 && y <= 580) || (y < 20 && yspeed >= 0) || (y > 580 && yspeed <= 0))
+	if (BordersCollideTest(x1, y1, 'y'))
 	{
-		y += yspeed;
+		y += dy;
+	}
+	else
+	{
+		dy = -dy;
+	}
+}
+
+bool Game::ObjectsCollideTest(int x1, int y1, int x2, int y2)
+{
+	return (x1 > x2 - 15 && x1 < x2 + 15
+		&& y1 > y2 - 15 && y1 < y2 + 15);
+}
+
+bool Game::BordersCollideTest(int x, int y, char axis)
+{
+	if (axis == 'x') 
+	{
+		return (x >= 20 && x <= gfx.ScreenWidth - 20)
+			|| (x < 20 && dx >= 0)
+			|| (x > gfx.ScreenWidth - 20 && dx <= 0);
+	}
+	else if (axis = 'y')
+	{
+		return (y >= 20 && y <= gfx.ScreenHeight - 20)
+			|| (y < 20 && dy >= 0)
+			|| (y > gfx.ScreenHeight - 20 && dy <= 0);
+	}
+}
+
+void Game::BallControl()
+{
+	if (wnd.kbd.KeyIsPressed(VK_SPACE))
+	{
+		dx = 0;
+		dy = 0;
 	}
 
 	if (wnd.kbd.KeyIsPressed(VK_UP))
 	{
-		yspeed = (yspeed > -5) ? yspeed - 1 : yspeed;
+		dy = (dy > -speedLimit) ? dy - 1 : dy;
 	}
 	else if (wnd.kbd.KeyIsPressed(VK_DOWN))
 	{
-		yspeed = (yspeed < 5) ? yspeed + 1 : yspeed;
-		
+		dy = (dy < speedLimit) ? dy + 1 : dy;
 	}
 	else if (wnd.kbd.KeyIsPressed(VK_LEFT))
 	{
-		xspeed = (xspeed > -5) ? xspeed - 1 : xspeed;
+		dx = (dx > -speedLimit) ? dx - 1 : dx;
 	}
 	else if (wnd.kbd.KeyIsPressed(VK_RIGHT))
 	{
-		xspeed = (xspeed < 5) ? xspeed + 1 : xspeed;
+		dx = (dx < speedLimit) ? dx + 1 : dx;
 	}
 }
 
-void Game::ComposeFrame()
+void Game::DrawBox(int x, int y, int color)
+{
+	for (int i = 0; i < 21; i++)
+	{
+		gfx.PutPixel(-10 + x + i, y - 10, color);
+		gfx.PutPixel(-10 + x + i, y + 10, color);
+		gfx.PutPixel(x - 10, -10 + y + i, color);
+		gfx.PutPixel(x + 10, -10 + y + i, color);
+	}
+}
+
+void Game::DrawBall(int x, int y, int color)
 {
 	if (isBoxMode) {
 		for (int i = 0; i < 11; i++)
@@ -98,5 +159,4 @@ void Game::ComposeFrame()
 			gfx.PutPixel(x, 3 + y + i, color);
 		}
 	}
-	
 }

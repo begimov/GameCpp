@@ -36,17 +36,27 @@ private:
 	void UpdateModel();
 	/********************************/
 	/*  User Functions              */
+	void DrawBox(int x, int y, int color);
+	void DrawBall(int x, int y, int color);
+	void CollisionTests(int x1, int y1, int x2, int y2);
+	bool ObjectsCollideTest(int x1, int y1, int x2, int y2);
+	bool BordersCollideTest(int x, int y, char axis);
+	void BallControl();
 	/********************************/
 private:
 	MainWindow& wnd;
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
+	const int xBox = 200;
+	const int yBox = 200;
+	const int boxColor = 3453888;
 	int x = 400;
 	int y = 300;
-	int color = 999;
-	int xspeed = 0;
-	int yspeed = 0;
+	const int color = 55456499;
+	const int speedLimit = 5;
+	int dx = 0;
+	int dy = 0;
 	bool isBoxMode = false;
 	/********************************/
 };

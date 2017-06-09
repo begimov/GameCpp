@@ -1,3 +1,4 @@
 ﻿  Game.cpp
+e:\c++\gamecpp\engine\game.cpp(102): warning C4715: 'Game::BordersCollideTest': not all control paths return a value
   Engine.vcxproj -> E:\C++\GameCpp\x64\Debug\Engine.exe
   Engine.vcxproj -> E:\C++\GameCpp\x64\Debug\Engine.pdb (Partial PDB)
