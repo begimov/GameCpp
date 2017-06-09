@@ -42,5 +42,11 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
+	int x = 400;
+	int y = 300;
+	int color = 999;
+	int xspeed = 0;
+	int yspeed = 0;
+	bool isBoxMode = false;
 	/********************************/
 };

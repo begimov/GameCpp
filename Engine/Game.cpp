@@ -38,8 +38,65 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
+
+	isBoxMode = wnd.kbd.KeyIsPressed(VK_CONTROL);
+
+	color = 999;
+
+	if (wnd.kbd.KeyIsPressed(VK_SPACE)) 
+	{
+		color = 888;
+	}
+
+	if ((x >= 20 && x <= 780) || (x < 20 && xspeed >= 0) || (x > 780 && xspeed <= 0))
+	{
+		x += xspeed;
+	}
+
+	if ((y >= 20 && y <= 580) || (y < 20 && yspeed >= 0) || (y > 580 && yspeed <= 0))
+	{
+		y += yspeed;
+	}
+
+	if (wnd.kbd.KeyIsPressed(VK_UP))
+	{
+		yspeed = (yspeed > -5) ? yspeed - 1 : yspeed;
+	}
+	else if (wnd.kbd.KeyIsPressed(VK_DOWN))
+	{
+		yspeed = (yspeed < 5) ? yspeed + 1 : yspeed;
+		
+	}
+	else if (wnd.kbd.KeyIsPressed(VK_LEFT))
+	{
+		xspeed = (xspeed > -5) ? xspeed - 1 : xspeed;
+	}
+	else if (wnd.kbd.KeyIsPressed(VK_RIGHT))
+	{
+		xspeed = (xspeed < 5) ? xspeed + 1 : xspeed;
+	}
 }
 
 void Game::ComposeFrame()
 {
+	if (isBoxMode) {
+		for (int i = 0; i < 11; i++)
+		{
+			gfx.PutPixel(-5 + x + i, y - 5, color);
+			gfx.PutPixel(-5 + x + i, y + 5, color);
+			gfx.PutPixel(x - 5, -5 + y + i, color);
+			gfx.PutPixel(x + 5, -5 + y + i, color);
+		}
+	}
+	else
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			gfx.PutPixel(-5 + x + i, y, color);
+			gfx.PutPixel(3 + x + i, y, color);
+			gfx.PutPixel(x, -5 + y + i, color);
+			gfx.PutPixel(x, 3 + y + i, color);
+		}
+	}
+	
 }
