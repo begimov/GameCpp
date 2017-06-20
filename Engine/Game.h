@@ -23,6 +23,8 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Graphics.h"
+#include "Box.h"
+#include "Ball.h"
 
 class Game
 {
@@ -38,9 +40,8 @@ private:
 	/*  User Functions              */
 	void DrawBox(int x, int y, int color);
 	void DrawBall(int x, int y, int color);
-	void CollisionTests(int x1, int y1, int x2, int y2);
-	bool ObjectsCollideTest(int x1, int y1, int x2, int y2);
-	bool BordersCollideTest(int x, int y, char axis);
+	void ObjectCollisionTest(int x, int y);
+	int ObjectsCollideTest(int x, int y);
 	void BallControl();
 	/********************************/
 private:
@@ -48,15 +49,7 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
-	const int xBox = 200;
-	const int yBox = 200;
-	const int boxColor = 3453888;
-	int x = 400;
-	int y = 300;
-	const int color = 55456499;
-	const int speedLimit = 5;
-	int dx = 0;
-	int dy = 0;
-	bool isBoxMode = false;
+	Box boxes[5];	
+	Ball ball;
 	/********************************/
 };

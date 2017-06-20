@@ -20,12 +20,22 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
+#include <random>
 
 Game::Game(MainWindow& wnd)
 	:
 	wnd(wnd),
 	gfx(wnd)
 {
+	std::random_device rd;
+	std::mt19937 rng(rd());
+	std::uniform_int_distribution<int> xDist(20, 780);
+	std::uniform_int_distribution<int> yDist(20, 580);
+	for (size_t i = 0; i < 5; i++)
+	{
+		boxes[i].x = xDist(rng);
+		boxes[i].y = yDist(rng);
+	}
 }
 
 void Game::Go()
@@ -38,92 +48,75 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	CollisionTests(x, y, xBox, yBox);
+	ball.BordersCollisionTest();
+	ObjectCollisionTest(ball.x, ball.y);
 	BallControl();
 }
 
 void Game::ComposeFrame()
 {
-	DrawBox(xBox, yBox, boxColor);
-	DrawBall(x, y, color);
+	for (size_t i = 0; i < 5; i++)
+	{
+		if (boxes[i].isVisible == true) {
+			DrawBox(boxes[i].x, boxes[i].y, boxes[i].boxColor);
+		}
+	}
+	DrawBall(ball.x, ball.y, ball.color);
 }
 
-void Game::CollisionTests(int x1, int y1, int x2, int y2)
+void Game::ObjectCollisionTest(int x, int y)
 {
-	if (ObjectsCollideTest(x1, y1, x2, y2)) {
-		dx = -dx;
-		dy = -dy;
-		isBoxMode = true;
+	int collidingBox = ObjectsCollideTest(x, y);
+
+	if (collidingBox >= 0) {
+		ball.dx = -ball.dx;
+		ball.dy = -ball.dy;
+		ball.isBoxMode = true;
+		boxes[collidingBox].isVisible = false;
 	}
 	else
 	{
-		isBoxMode = false;
-	}
-
-	if (BordersCollideTest(x1, y1, 'x'))
-	{
-		x += dx;
-	}
-	else
-	{
-		dx = -dx;
-	}
-
-	if (BordersCollideTest(x1, y1, 'y'))
-	{
-		y += dy;
-	}
-	else
-	{
-		dy = -dy;
+		ball.isBoxMode = false;
 	}
 }
 
-bool Game::ObjectsCollideTest(int x1, int y1, int x2, int y2)
+int Game::ObjectsCollideTest(int x, int y)
 {
-	return (x1 > x2 - 15 && x1 < x2 + 15
-		&& y1 > y2 - 15 && y1 < y2 + 15);
-}
-
-bool Game::BordersCollideTest(int x, int y, char axis)
-{
-	if (axis == 'x') 
+	for (size_t i = 0; i < 5; i++)
 	{
-		return (x >= 20 && x <= gfx.ScreenWidth - 20)
-			|| (x < 20 && dx >= 0)
-			|| (x > gfx.ScreenWidth - 20 && dx <= 0);
+		if (boxes[i].isVisible == true) {
+			if (x > boxes[i].x - 15 && x < boxes[i].x + 15
+				&& y > boxes[i].y - 15 && y < boxes[i].y + 15) {
+				return i;
+			}
+		}
 	}
-	else if (axis = 'y')
-	{
-		return (y >= 20 && y <= gfx.ScreenHeight - 20)
-			|| (y < 20 && dy >= 0)
-			|| (y > gfx.ScreenHeight - 20 && dy <= 0);
-	}
+	return -1;
 }
 
 void Game::BallControl()
 {
 	if (wnd.kbd.KeyIsPressed(VK_SPACE))
 	{
-		dx = 0;
-		dy = 0;
+		ball.dx = 0;
+		ball.dy = 0;
 	}
 
 	if (wnd.kbd.KeyIsPressed(VK_UP))
 	{
-		dy = (dy > -speedLimit) ? dy - 1 : dy;
+		ball.dy = (ball.dy > -ball.speedLimit) ? ball.dy - 1 : ball.dy;
 	}
 	else if (wnd.kbd.KeyIsPressed(VK_DOWN))
 	{
-		dy = (dy < speedLimit) ? dy + 1 : dy;
+		ball.dy = (ball.dy < ball.speedLimit) ? ball.dy + 1 : ball.dy;
 	}
 	else if (wnd.kbd.KeyIsPressed(VK_LEFT))
 	{
-		dx = (dx > -speedLimit) ? dx - 1 : dx;
+		ball.dx = (ball.dx > -ball.speedLimit) ? ball.dx - 1 : ball.dx;
 	}
 	else if (wnd.kbd.KeyIsPressed(VK_RIGHT))
 	{
-		dx = (dx < speedLimit) ? dx + 1 : dx;
+		ball.dx = (ball.dx < ball.speedLimit) ? ball.dx + 1 : ball.dx;
 	}
 }
 
@@ -140,7 +133,7 @@ void Game::DrawBox(int x, int y, int color)
 
 void Game::DrawBall(int x, int y, int color)
 {
-	if (isBoxMode) {
+	if (ball.isBoxMode) {
 		for (int i = 0; i < 11; i++)
 		{
 			gfx.PutPixel(-5 + x + i, y - 5, color);

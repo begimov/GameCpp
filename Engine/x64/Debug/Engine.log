@@ -1,4 +1,6 @@
 ﻿  Game.cpp
-e:\c++\gamecpp\engine\game.cpp(102): warning C4715: 'Game::BordersCollideTest': not all control paths return a value
+  Main.cpp
+  MainWindow.cpp
+e:\c++\gamecpp\engine\game.cpp(90): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
   Engine.vcxproj -> E:\C++\GameCpp\x64\Debug\Engine.exe
   Engine.vcxproj -> E:\C++\GameCpp\x64\Debug\Engine.pdb (Partial PDB)
