@@ -25,16 +25,18 @@
 Game::Game(MainWindow& wnd)
 	:
 	wnd(wnd),
-	gfx(wnd)
+	gfx(wnd),
+	rng(rd()),
+	xDist(50,750),
+	yDist(50,550)
 {
-	std::random_device rd;
-	std::mt19937 rng(rd());
-	std::uniform_int_distribution<int> xDist(20, 780);
-	std::uniform_int_distribution<int> yDist(20, 580);
-	for (size_t i = 0; i < 5; i++)
+	for (size_t i = 0; i < numOfBoxes; i++)
 	{
-		boxes[i].x = xDist(rng);
-		boxes[i].y = yDist(rng);
+		boxes[i].Init(xDist(rng), yDist(rng));
+	}
+	for (size_t i = 0; i < numOfBlocks; i++)
+	{
+		blocks[i].Init(xDist(rng), yDist(rng));
 	}
 }
 
@@ -48,108 +50,41 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	ball.BordersCollisionTest();
-	ObjectCollisionTest(ball.x, ball.y);
-	BallControl();
+	for (size_t i = 0; i < numOfBoxes; i++)
+	{
+		if (boxes[i].isCollidingWithBall(ball.GetX(), ball.GetY()))
+		{
+			scoreMeter.Increment();
+			ball.InvertSpeed();
+		}
+	}
+
+	for (size_t i = 0; i < numOfBlocks; i++)
+	{
+		if (blocks[i].isCollidingWithBall(ball.GetX(), ball.GetY()))
+		{
+			scoreMeter.Decrement();
+			ball.InvertSpeed();
+		}
+	}
+	
+	ball.Move(wnd);
+	
 }
 
 void Game::ComposeFrame()
 {
-	for (size_t i = 0; i < 5; i++)
-	{
-		if (boxes[i].isVisible == true) {
-			DrawBox(boxes[i].x, boxes[i].y, boxes[i].boxColor);
-		}
-	}
-	DrawBall(ball.x, ball.y, ball.color);
-}
+	scoreMeter.Draw(gfx);
 
-void Game::ObjectCollisionTest(int x, int y)
-{
-	int collidingBox = ObjectsCollideTest(x, y);
-
-	if (collidingBox >= 0) {
-		ball.dx = -ball.dx;
-		ball.dy = -ball.dy;
-		ball.isBoxMode = true;
-		boxes[collidingBox].isVisible = false;
-	}
-	else
+	for (size_t i = 0; i < numOfBoxes; i++)
 	{
-		ball.isBoxMode = false;
-	}
-}
-
-int Game::ObjectsCollideTest(int x, int y)
-{
-	for (size_t i = 0; i < 5; i++)
-	{
-		if (boxes[i].isVisible == true) {
-			if (x > boxes[i].x - 15 && x < boxes[i].x + 15
-				&& y > boxes[i].y - 15 && y < boxes[i].y + 15) {
-				return i;
-			}
-		}
-	}
-	return -1;
-}
-
-void Game::BallControl()
-{
-	if (wnd.kbd.KeyIsPressed(VK_SPACE))
-	{
-		ball.dx = 0;
-		ball.dy = 0;
+		boxes[i].Draw(gfx);
 	}
 
-	if (wnd.kbd.KeyIsPressed(VK_UP))
+	for (size_t i = 0; i < numOfBlocks; i++)
 	{
-		ball.dy = (ball.dy > -ball.speedLimit) ? ball.dy - 1 : ball.dy;
+		blocks[i].Draw(gfx);
 	}
-	else if (wnd.kbd.KeyIsPressed(VK_DOWN))
-	{
-		ball.dy = (ball.dy < ball.speedLimit) ? ball.dy + 1 : ball.dy;
-	}
-	else if (wnd.kbd.KeyIsPressed(VK_LEFT))
-	{
-		ball.dx = (ball.dx > -ball.speedLimit) ? ball.dx - 1 : ball.dx;
-	}
-	else if (wnd.kbd.KeyIsPressed(VK_RIGHT))
-	{
-		ball.dx = (ball.dx < ball.speedLimit) ? ball.dx + 1 : ball.dx;
-	}
-}
 
-void Game::DrawBox(int x, int y, int color)
-{
-	for (int i = 0; i < 21; i++)
-	{
-		gfx.PutPixel(-10 + x + i, y - 10, color);
-		gfx.PutPixel(-10 + x + i, y + 10, color);
-		gfx.PutPixel(x - 10, -10 + y + i, color);
-		gfx.PutPixel(x + 10, -10 + y + i, color);
-	}
-}
-
-void Game::DrawBall(int x, int y, int color)
-{
-	if (ball.isBoxMode) {
-		for (int i = 0; i < 11; i++)
-		{
-			gfx.PutPixel(-5 + x + i, y - 5, color);
-			gfx.PutPixel(-5 + x + i, y + 5, color);
-			gfx.PutPixel(x - 5, -5 + y + i, color);
-			gfx.PutPixel(x + 5, -5 + y + i, color);
-		}
-	}
-	else
-	{
-		for (int i = 0; i < 3; i++)
-		{
-			gfx.PutPixel(-5 + x + i, y, color);
-			gfx.PutPixel(3 + x + i, y, color);
-			gfx.PutPixel(x, -5 + y + i, color);
-			gfx.PutPixel(x, 3 + y + i, color);
-		}
-	}
+	ball.Draw(gfx);
 }

@@ -24,7 +24,10 @@
 #include "Mouse.h"
 #include "Graphics.h"
 #include "Box.h"
+#include "Block.h"
 #include "Ball.h"
+#include "ScoreMeter.h"
+#include <random>
 
 class Game
 {
@@ -38,18 +41,21 @@ private:
 	void UpdateModel();
 	/********************************/
 	/*  User Functions              */
-	void DrawBox(int x, int y, int color);
-	void DrawBall(int x, int y, int color);
-	void ObjectCollisionTest(int x, int y);
-	int ObjectsCollideTest(int x, int y);
-	void BallControl();
 	/********************************/
 private:
 	MainWindow& wnd;
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
-	Box boxes[5];	
+	std::random_device rd;
+	std::mt19937 rng;
+	std::uniform_int_distribution<int> xDist;
+	std::uniform_int_distribution<int> yDist;
+	static constexpr int numOfBoxes = 30;
+	static constexpr int numOfBlocks = 5;
+	Box boxes[numOfBoxes];
+	Block blocks[numOfBlocks];
 	Ball ball;
+	ScoreMeter scoreMeter;
 	/********************************/
 };

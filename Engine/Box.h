@@ -1,11 +1,15 @@
 #pragma once
+#include "Graphics.h"
 
 class Box
 {
 public:
-	void Temp();
+	void Init(int inX, int inY);
+	void Draw(Graphics& gfx) const;
+	bool isCollidingWithBall(int x, int y);
+private:
 	int x;
 	int y;
-	static constexpr int boxColor = 3453888;
 	bool isVisible = true;
+	bool initialized = false;
 };
