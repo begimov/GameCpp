@@ -1,4 +1,4 @@
-#include "Block.h";
+#include "Block.h"
 #include <assert.h>
 
 void Block::Init(int inX, int inY)

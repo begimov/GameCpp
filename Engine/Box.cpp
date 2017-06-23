@@ -1,4 +1,4 @@
-#include "Box.h";
+#include "Box.h"
 #include <assert.h>
 
 void Box::Init(int inX, int inY)

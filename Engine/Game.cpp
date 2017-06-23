@@ -20,7 +20,6 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
-#include <random>
 
 Game::Game(MainWindow& wnd)
 	:
@@ -50,6 +49,8 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
+	const float dTime = frameTimer.Mark();
+
 	for (size_t i = 0; i < numOfBoxes; i++)
 	{
 		if (boxes[i].isCollidingWithBall(ball.GetX(), ball.GetY()))
@@ -67,9 +68,8 @@ void Game::UpdateModel()
 			ball.InvertSpeed();
 		}
 	}
-	
-	ball.Move(wnd);
-	
+
+	ball.Move(wnd, dTime);
 }
 
 void Game::ComposeFrame()

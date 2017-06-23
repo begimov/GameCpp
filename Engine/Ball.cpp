@@ -1,8 +1,8 @@
 #include "Ball.h"
 
-void Ball::Move(MainWindow& wnd)
+void Ball::Move(MainWindow& wnd, float dTime)
 {
-	BordersCollisionTest();
+	BordersCollisionTest(dTime);
 	BallControl(wnd);
 }
 
@@ -12,16 +12,16 @@ void Ball::Draw(Graphics& gfx) const
 	{
 		for (int j = 0; j < 11; j++)
 		{
-			gfx.PutPixel(x + j - 5, y + i - 5, Colors::Green);
+			gfx.PutPixel(int(x) + j - 5, int(y) + i - 5, Colors::Green);
 		}
 	}
 }
 
-void Ball::BordersCollisionTest()
+void Ball::BordersCollisionTest(float dTime)
 {
 	if (!IsCollidingBorder('x'))
 	{
-		x += dx;
+		x += dx * dTime;
 	}
 	else
 	{
@@ -30,7 +30,7 @@ void Ball::BordersCollisionTest()
 
 	if (!IsCollidingBorder('y'))
 	{
-		y += dy;
+		y += dy * dTime;
 	}
 	else
 	{
@@ -46,12 +46,12 @@ void Ball::InvertSpeed()
 
 int Ball::GetX() const
 {
-	return x;
+	return int(x);
 }
 
 int Ball::GetY() const
 {
-	return y;
+	return int(y);
 }
 
 void Ball::BallControl(MainWindow& wnd)
@@ -64,19 +64,19 @@ void Ball::BallControl(MainWindow& wnd)
 
 	if (wnd.kbd.KeyIsPressed(VK_UP))
 	{
-		dy = (dy > -speedLimit) ? dy - 1 : dy;
+		dy = (dy > -speedLimit) ? dy - speedChangeStep : dy;
 	}
 	else if (wnd.kbd.KeyIsPressed(VK_DOWN))
 	{
-		dy = (dy < speedLimit) ? dy + 1 : dy;
+		dy = (dy < speedLimit) ? dy + speedChangeStep : dy;
 	}
 	else if (wnd.kbd.KeyIsPressed(VK_LEFT))
 	{
-		dx = (dx > -speedLimit) ? dx - 1 : dx;
+		dx = (dx > -speedLimit) ? dx - speedChangeStep : dx;
 	}
 	else if (wnd.kbd.KeyIsPressed(VK_RIGHT))
 	{
-		dx = (dx < speedLimit) ? dx + 1 : dx;
+		dx = (dx < speedLimit) ? dx + speedChangeStep : dx;
 	}
 }
 

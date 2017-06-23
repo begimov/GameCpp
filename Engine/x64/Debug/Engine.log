@@ -1,6 +1,10 @@
-﻿  Game.cpp
+﻿  Ball.cpp
+  Game.cpp
   Main.cpp
   MainWindow.cpp
-  ScoreMeter.cpp
+e:\c++\gamecpp\engine\chiliwin.h(24): warning C4005: '_WIN32_WINNT': macro redefinition (compiling source file Ball.cpp)
+  c:\program files (x86)\windows kits\8.1\include\shared\sdkddkver.h(200): note: see previous definition of '_WIN32_WINNT' (compiling source file Ball.cpp)
+e:\c++\gamecpp\engine\chiliwin.h(64): warning C4005: 'STRICT': macro redefinition (compiling source file Ball.cpp)
+  c:\program files (x86)\windows kits\8.1\include\shared\minwindef.h(23): note: see previous definition of 'STRICT' (compiling source file Ball.cpp)
   Engine.vcxproj -> E:\C++\GameCpp\x64\Debug\Engine.exe
   Engine.vcxproj -> E:\C++\GameCpp\x64\Debug\Engine.pdb (Partial PDB)

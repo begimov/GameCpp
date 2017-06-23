@@ -28,6 +28,7 @@
 #include "Ball.h"
 #include "ScoreMeter.h"
 #include <random>
+#include "FrameTimer.h"
 
 class Game
 {
@@ -47,6 +48,7 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
+	FrameTimer frameTimer;
 	std::random_device rd;
 	std::mt19937 rng;
 	std::uniform_int_distribution<int> xDist;
